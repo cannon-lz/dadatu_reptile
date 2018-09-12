@@ -60,12 +60,10 @@ module.exports = function App() {
     console.log(absolutePath);
     fs.stat(absolutePath, function (err, stats) {
       if (stats && stats.isFile()) {
-        fs.readFile(absolutePath, {encoding: 'utf-8'}, function (err, data) {
-          const type = mime.getMimeType(absolutePath);
-          resp.writeHead(200, {'Content-type': type});
-          resp.write(data);
-          resp.end();
-        })
+        const readStream = fs.createReadStream(absolutePath);
+        const type = mime.getMimeType(absolutePath);
+        resp.writeHead(200, {'Content-type': type});
+        readStream.pipe(resp);
       } else {
         resp.writeHead(404);
         resp.end();

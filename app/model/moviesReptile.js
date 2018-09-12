@@ -52,6 +52,7 @@ exports.parseVideoInfo = function(url, callback) {
     const playlist = $('#playlist');
     const movieName = $('.container .row .hy-main-content .hy-video-details .item dl dd .head h3');
     const movieImage = $('.container .row .hy-main-content .hy-video-details .item dl dt a');
+    const movieDesc = $('.container .row .hy-main-content .hy-video-details .item dl dt a');
     const ret = new Movie([], movieName.text(), extractImageByBackground(movieImage));
     playlist.children().each(function(index) {
       const atag = $(this).children('a');
@@ -94,10 +95,11 @@ exports.parseVideoPlayInfo = function(url, callback) {
   })
 };
 
-function Movie(playSource, name, image) {
+function Movie(playSource, name, image, desc) {
   this.playSource = playSource;
   this.name = name;
   this.image = image;
+  this.desc = desc;
 }
 
 function MovieSource(from, playUrls) {
