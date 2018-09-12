@@ -52,8 +52,8 @@ exports.parseVideoInfo = function(url, callback) {
     const playlist = $('#playlist');
     const movieName = $('.container .row .hy-main-content .hy-video-details .item dl dd .head h3');
     const movieImage = $('.container .row .hy-main-content .hy-video-details .item dl dt a');
-    const movieDesc = $('.container .row .hy-main-content .hy-video-details .item dl dt a');
-    const ret = new Movie([], movieName.text(), extractImageByBackground(movieImage));
+    const movieDesc = $('.container .row .hy-layout .tab-content #list3 .item');
+    const ret = new Movie([], movieName.text(), extractImageByBackground(movieImage), movieDesc.text());
     playlist.children().each(function(index) {
       const atag = $(this).children('a');
       const source = new MovieSource(atag.text().replace(' 无需安装任何插件，即可在线播放 ', ''), []);
