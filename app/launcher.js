@@ -14,3 +14,5 @@ app.get('/video', movieController.video);
 app.get('/play', movieController.play);
 
 app.listen(9980);
+
+console.info('Server', 'server started for http://localhost:' + 9980);

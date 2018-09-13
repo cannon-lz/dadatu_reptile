@@ -1,6 +1,7 @@
 const request = require('superagent');
 const cheerio = require('cheerio');
 const urlencode = require('urlencode');
+const utils = require('../lib/utils');
 
 const DADATU_BASE = 'https://www.dadatu.com';
 const SEARCH = DADATU_BASE + '/search.php';
@@ -42,7 +43,7 @@ exports.search = function(keyword, page, callback) {
         ret[index].desc = desc;
       });
       ret.totalCount = totalCount;
-      callback.success(ret);
+      utils.successCallback(callback, ret);
     });
 };
 
@@ -64,7 +65,7 @@ exports.parseVideoInfo = function(url, callback) {
       });
       ret.playSource.push(source);
     });
-    callback.success(ret);
+    utils.successCallback(callback, ret);
   });
 };
 
@@ -81,7 +82,7 @@ exports.parseVideoPlayInfo = function(url, callback) {
   const workerProcess = childProcess.execFile(binPath, childArgs, function(err, stdout, stderr) {
     if (err) {
       console.error("ServerError", err);
-      callback.error(err);
+      utils.errorCallback(callback, err);
     }
   });
   let result = '{}';
@@ -91,7 +92,7 @@ exports.parseVideoPlayInfo = function(url, callback) {
   });
 
   workerProcess.on('exit', function(code) {
-    callback.success(result);
+    utils.successCallback(callback, result);
   })
 };
 
