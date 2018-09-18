@@ -21,8 +21,28 @@ exports.findByKeyword = function (keyword, page, callback) {
   reptile.search(keyword, page, c);
 };
 
-exports.findByUrl = function (url, callback) {
-  reptile.parseVideoInfo(url, callback)
+exports.findById = function (url, callback) {
+  reptile.parseVideoInfo(url, {
+    success: function(res) {
+      utils.successCallback(callback, res);
+      //dao.savePlaySource(url, res.playSource)
+      for (let i = 0; i < res.playSource.length; i++) {
+        const it = res.playSource[i];
+        const urls = it.playUrls;
+        for (let j = 0; j < urls.length; j++) {
+          reptile.parseVideoPlayInfo(urls[j].url, {
+            success: res => {
+              const data = JSON.parse(res);
+              if (data.from === urls[j].url) {
+                it.play_url = data.result;
+                dao.saveOnePlaySource(url, it)
+              }
+            }
+          });
+        }
+      }
+    }
+  })
 };
 
 exports.queryVideoSource = function (url, callback) {

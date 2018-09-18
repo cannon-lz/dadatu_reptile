@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        img, input {
+            display: block;
+            margin: 0 auto;
+        }
+        p, input {
+            font-size: 16px;
+        }
+        img {
+            width: 85px;
+            height: 75px;
+        }
+
+        p {
+            text-align: center;
+            color: #aeaeae;
+            margin-top: 16px;
+        }
+
+        .divider {
+            background-color: #bfbfbf;
+            height: 1px;
+            margin: 37px 62px;
+        }
+
+        input {
+            width: 180px;
+            height: 40px;
+            background-color: #ff4466;
+            border: 0 transparent solid;
+            border-radius: 5px;
+            text-align: center;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div id="root" class="container">
+    <img src="common_err_bg.png">
+    <p class="error-tips">加载失败，请检查你的网络设置</p>
+    <div class="divider"></div>
+    <input type="button" value="点击重新加载" onclick="bxJsBridge.refresh()"/>
+</div>
+</body>
+<script>
+    const root = document.getElementById('root');
+    const shouldTop = (window.innerHeight - root.clientHeight) / 2;
+    root.style.marginTop = `${shouldTop}px`
+</script>
+</html>

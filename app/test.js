@@ -1,12 +1,15 @@
-const utils = require('./lib/utils');
-const dao = require('./model/moviesDao');
-function success(data) {
-  const res = utils.deWeighting(data, 'href');
-  console.log(res);
+async function test() {
+  return 'Hello word';
 }
-dao.findAll({
-  success: success
-});
+
+async function doIt() {
+  const result = await test();
+  console.log(result);
+}
+
+doIt();
+console.log("block");
+
 
 
 

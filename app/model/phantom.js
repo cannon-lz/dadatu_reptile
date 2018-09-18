@@ -13,22 +13,28 @@ page.onLoadFinished = function (status) {
     currentIFrame = 2;
   } else {
     setTimeout(function () {
-      const videoSrc = page.evaluate(function() {
+      const videoSrc = page.evaluate(function () {
         const videos = document.getElementsByTagName('video');
         return videos !== null && videos.length > 0 ? videos[0].getAttribute('src') : '+purl+'
       });
+      const res = {
+        from: system.args[1]
+      };
+      console.log('video src ' + videoSrc);
       if (videoSrc.indexOf('purl') >= 0) {
         page.onConsoleMessage = function (data) {
-          console.log(JSON.stringify({result: data}));
+          res.result = data;
+          console.log(JSON.stringify(res));
         };
-        page.evaluateJavaScript('function(){console.log(purl)}')
+        page.evaluateJavaScript("function(){if (purl) {console.log(purl) } else {console.log('') }}")
       } else {
-        console.log(JSON.stringify({result: videoSrc}));
+        res.result = videoSrc;
+        console.log(JSON.stringify(res));
       }
 
       page.close();
       phantom.exit();
-   }, 500);
+    }, 1000);
   }
 };
 page.open(system.args[1], function (status) {
