@@ -2,9 +2,7 @@ var webpage = require('webpage');
 var page = webpage.create();
 var system = require('system');
 var currentIFrame = 0;
-console.log('test log');
 page.onLoadFinished = function (status) {
-  console.log(currentIFrame);
   if (currentIFrame === 0) {
     page.switchToFrame(0);
     currentIFrame = 1;
@@ -20,7 +18,6 @@ page.onLoadFinished = function (status) {
       const res = {
         from: system.args[1]
       };
-      console.log('video src ' + videoSrc);
       if (videoSrc.indexOf('purl') >= 0) {
         page.onConsoleMessage = function (data) {
           res.result = data;
@@ -38,7 +35,6 @@ page.onLoadFinished = function (status) {
   }
 };
 page.open(system.args[1], function (status) {
-  console.log(status);
   if (status !== 'success') {
     page.close();
     phantom.exit();

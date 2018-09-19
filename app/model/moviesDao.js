@@ -1,37 +1,11 @@
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const utils = require('../lib/utils');
 const dbUrl = 'mongodb://localhost:27017/movies';
-
-function findAll(callback) {
-  connectDb(function (client, collection) {
-    collection.find({}).toArray(function (err, res) {
-      if (err) {
-        utils.errorCallback(callback, err)
-      } else {
-        utils.successCallback(callback, res);
-      }
-      client.close();
-    })
-  })
-}
-
-function findByDocname(docname, callback) {
-  connectDb((client, collection) => {
-    collection.find({_doc_name: docname}).toArray((err, res) => {
-      if (err) {
-        utils.errorCallback(callback, err)
-      } else {
-        utils.successCallback(callback, res);
-      }
-      client.close();
-    })
-  })
-}
 
 function saveMovies(movies, callback) {
   movies.forEach(it => {
     it._id = it.href;
-    it._doc_name = '_movie'
   });
   connectDb(function (client, collection) {
     collection.insertMany(movies, function (err, res) {
@@ -48,25 +22,24 @@ function saveMovies(movies, callback) {
 function savePlaySource(movieId, playSource, callback) {
   playSource.forEach(it => {
     it._doc_name = '_play_source';
-    it._movie_id = movieId;
   });
   connectDb((client, collection) => {
-    collection.insertMany(playSource, (err, res) => {
-      if (err) {
-        utils.errorCallback(callback, err);
-      } else {
-        utils.successCallback(callback, res);
-      }
-      client.close();
-    })
+    collection.updateOne({_id: movieId}, {$set: playSource})
+    // collection.insertMany(playSource, (err, res) => {
+    //   if (err) {
+    //     utils.errorCallback(callback, err);
+    //   } else {
+    //     collection.updateOne({_id: movieId}, {$push: {play_source_ids: res.insertedIds}});
+    //     utils.successCallback(callback, res);
+    //   }
+    //   client.close();
+    // })
   })
 }
 
-function saveOnePlaySource(movieId, plausource, callback) {
+function updatePlaySource(url, playUrl, callback) {
   connectDb((client, collection) => {
-    plausource._movie_id = movieId;
-    plausource._doc_name = '_play_source';
-    collection.insert(plausource, (err, res) => {
+    collection.updateOne({"playUrls.url": url}, {$set: {"playUrls.$.source": playUrl}}, (err, res) => {
       if (err) {
         utils.errorCallback(callback, err);
       } else {
@@ -75,6 +48,7 @@ function saveOnePlaySource(movieId, plausource, callback) {
       client.close();
     })
   })
+
 }
 
 function connectDb(opt) {
@@ -86,11 +60,40 @@ function connectDb(opt) {
   })
 }
 
+function findPlaySourceById(movieId, callback) {
+  connectDb((client, collection) => {
+    collection.find({_doc_name: '_play_source', '_id': new ObjectID(movieId)}, {
+      from: true,
+      playUrls: true
+    }).toArray((err, res) => {
+      if (err) {
+        utils.errorCallback(callback, error)
+      } else {
+        utils.successCallback(callback, res)
+      }
+      client.close();
+    })
+  })
+}
+
+function findPlaySourceUrl(playSourceUrl, callback) {
+  connectDb((client, collection) => {
+    collection.find({playUrls: {$elemMatch: {url: playSourceUrl}}}, {'playUrls.$': 2}).toArray((err, res) => {
+      if (err) {
+        utils.errorCallback(callback, err)
+      } else {
+        utils.successCallback(callback, res)
+      }
+      client.close();
+    })
+  })
+}
+
 module.exports = {
-  findAll: findAll,
-  findByDocname: findByDocname,
   saveMovies: saveMovies,
   savePlaySource: savePlaySource,
-  saveOnePlaySource: saveOnePlaySource
+  updatePlaySource: updatePlaySource,
+  findPlaySourceById: findPlaySourceById,
+  findPlaySourceUrl: findPlaySourceUrl
 };
 
