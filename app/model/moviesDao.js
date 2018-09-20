@@ -36,7 +36,11 @@ function addRealPlayUrl(url, playUrl, callback) {
   connectDb((client, collection) => {
     collection.update(
       {"play_source.playUrls.url": url},
+<<<<<<< HEAD
       {$set: {"play_source.$[].playUrls.$[urlIt].real_url": playUrl}},
+=======
+      {$set: {"play_source.$[].playUrls.$[urlIt].url": playUrl}},
+>>>>>>> 17e39a7c691e2a813282bab5516254c1c364d108
       {arrayFilters: [{"urlIt.url": url}]},
       (err, res) => {
         if (err) {
