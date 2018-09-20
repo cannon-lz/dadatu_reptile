@@ -95,7 +95,7 @@ exports.parseVideoPlayInfo = function (url, callback) {
     if (isJSON(result)) {
       utils.successCallback(callback, result);
     } else {
-      utils.errorCallback(callback, result);
+      utils.errorCallback(callback, new Error(result));
     }
   })
 };

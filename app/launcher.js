@@ -12,6 +12,7 @@ app.get('/index', indexController.index);
 app.get('/search', movieController.search);
 app.get('/video', movieController.video);
 app.get('/play', movieController.play);
+app.get('/movies', movieController.movies);
 
 app.listen(9980);
 

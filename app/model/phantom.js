@@ -11,11 +11,11 @@ page.onLoadFinished = function (status) {
     currentIFrame = 2;
   } else {
     setTimeout(function () {
-      const videoSrc = page.evaluate(function () {
-        const videos = document.getElementsByTagName('video');
+      var videoSrc = page.evaluate(function () {
+        var videos = document.getElementsByTagName('video');
         return videos !== null && videos.length > 0 ? videos[0].getAttribute('src') : '+purl+'
       });
-      const res = {
+      var res = {
         from: system.args[1]
       };
       if (videoSrc.indexOf('purl') >= 0) {
