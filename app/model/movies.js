@@ -22,7 +22,10 @@ exports.findById = function (url, callback) {
   reptile.parseVideoInfo(url, {
     success: function (res) {
       utils.successCallback(callback, res);
-      dao.savePlaySource(url, res.playSource)
+      dao.savePlaySource(url, {
+        play_source: res.playSource,
+        desc: res.desc
+      })
     }
   })
   // dao.findPlaySourceById(url, {
@@ -39,19 +42,11 @@ exports.findById = function (url, callback) {
 };
 
 exports.queryVideoSource = function (url, callback) {
-  dao.findPlaySourceUrl(url, {
+  reptile.parseVideoPlayInfo(url, {
     success: res => {
-      if (res) {
-        utils.successCallback(callback, {from: url, result: res.playUrls[0].url})
-      } else {
-        reptile.parseVideoPlayInfo(url, {
-          success: res => {
-            utils.successCallback(callback, res);
-            const data = JSON.parse(res);
-            dao.updatePlaySource(url, data.result)
-          }
-        });
-      }
+      utils.successCallback(callback, res);
+      const data = JSON.parse(res);
+      dao.updatePlaySource(url, data.result)
     }
   });
 };

@@ -20,26 +20,8 @@ function saveMovies(movies, callback) {
 }
 
 function savePlaySource(movieId, playSource, callback) {
-  playSource.forEach(it => {
-    it._doc_name = '_play_source';
-  });
   connectDb((client, collection) => {
-    collection.updateOne({_id: movieId}, {$set: playSource})
-    // collection.insertMany(playSource, (err, res) => {
-    //   if (err) {
-    //     utils.errorCallback(callback, err);
-    //   } else {
-    //     collection.updateOne({_id: movieId}, {$push: {play_source_ids: res.insertedIds}});
-    //     utils.successCallback(callback, res);
-    //   }
-    //   client.close();
-    // })
-  })
-}
-
-function updatePlaySource(url, playUrl, callback) {
-  connectDb((client, collection) => {
-    collection.updateOne({"playUrls.url": url}, {$set: {"playUrls.$.source": playUrl}}, (err, res) => {
+    collection.updateOne({_id: movieId}, {$set: playSource}, (err, res) => {
       if (err) {
         utils.errorCallback(callback, err);
       } else {
@@ -47,6 +29,23 @@ function updatePlaySource(url, playUrl, callback) {
       }
       client.close();
     })
+  })
+}
+
+function addRealPlayUrl(url, playUrl, callback) {
+  connectDb((client, collection) => {
+    collection.update(
+      {"play_source.playUrls.url": url},
+      {$set: {"play_source.$[].playUrls.$[urlIt].url": playUrl}},
+      {arrayFilters: [{"urlIt.url": url}]},
+      (err, res) => {
+        if (err) {
+          utils.errorCallback(callback, err);
+        } else {
+          utils.successCallback(callback, res);
+        }
+        client.close();
+      })
   })
 
 }
@@ -60,12 +59,9 @@ function connectDb(opt) {
   })
 }
 
-function findPlaySourceById(movieId, callback) {
+function findMovieById(id, callback) {
   connectDb((client, collection) => {
-    collection.find({_doc_name: '_play_source', '_id': new ObjectID(movieId)}, {
-      from: true,
-      playUrls: true
-    }).toArray((err, res) => {
+    collection.find({_id: id}).toArray((err, res) => {
       if (err) {
         utils.errorCallback(callback, error)
       } else {
@@ -89,11 +85,44 @@ function findPlaySourceUrl(playSourceUrl, callback) {
   })
 }
 
+function findRealPlayUrl(playUrl, callback) {
+  connectDb((client, collection) => {
+    collection.find({'play_source.playUrls.url': playUrl}).forEach((doc) => {
+      doc.play_source = doc.play_source.filter((playSource) => {
+        playSource.playUrls = playSource.playUrls.filter((url) => {
+          return url.url === playUrl;
+        });
+        return playSource.playUrls.length != 0;
+      });
+      //console.log(doc);
+      utils.successCallback(callback, doc);
+    })
+  });
+}
+
 module.exports = {
   saveMovies: saveMovies,
   savePlaySource: savePlaySource,
-  updatePlaySource: updatePlaySource,
-  findPlaySourceById: findPlaySourceById,
-  findPlaySourceUrl: findPlaySourceUrl
+  addRealPlayUrl: addRealPlayUrl,
+  findPlaySourceById: findMovieById,
+  findPlaySourceUrl: findPlaySourceUrl,
+  findRealPlayUrl: findRealPlayUrl
 };
 
+// findRealPlayUrl('https://www.dadatu.com/xj/wobushiyaoshen/play-0-0.html', {
+//   success: (res) => {
+//     console.log(res);
+//     console.log(res.play_source[0].playUrls.length);
+//     console.log(res.play_source[0].playUrls);
+//   }
+// });
+
+// updatePlaySource('https://www.dadatu.com/xj/wobushiyaoshen/play-0-0.html', 'playUrl', {
+//   success: (res) => {
+//     console
+//       .log(res)
+//   },
+//   error: (err) => {
+//     console.log(err)
+//   }
+// });
