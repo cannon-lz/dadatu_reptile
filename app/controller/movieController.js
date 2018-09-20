@@ -40,7 +40,7 @@ function MovieController() {
   };
 
   this.video = function (req, resp) {
-    moviesModel.findByUrl(urlParser.parse(req.url, true).query.url, {
+    moviesModel.findById(urlParser.parse(req.url, true).query.url, {
       success: function (data) {
         resp.writeHead(200, {'Content-type' : 'text/json; charset=utf-8'});
         resp.write(JSON.stringify(data));

@@ -7,8 +7,7 @@ exports.findAll = function () {
 };
 
 exports.findByKeyword = function (keyword, page, callback) {
-
-  const c = {
+  reptile.search(keyword, page, {
     success: function (res) {
       utils.successCallback(callback, res);
       dao.saveMovies(res)
@@ -16,15 +15,38 @@ exports.findByKeyword = function (keyword, page, callback) {
     error: function (err) {
 
     }
-  };
-
-  reptile.search(keyword, page, c);
+  });
 };
 
-exports.findByUrl = function (url, callback) {
-  reptile.parseVideoInfo(url, callback)
+exports.findById = function (url, callback) {
+  reptile.parseVideoInfo(url, {
+    success: function (res) {
+      utils.successCallback(callback, res);
+      dao.savePlaySource(url, {
+        play_source: res.playSource,
+        desc: res.desc
+      })
+    }
+  })
+  // dao.findPlaySourceById(url, {
+  //   success: res => {
+  //     // if (res && res.length > 0) {
+  //     //   utils.successCallback(callback, res)
+  //     // } else {
+  //     //
+  //     // }
+  //
+  //   }
+  // });
+
 };
 
 exports.queryVideoSource = function (url, callback) {
-  reptile.parseVideoPlayInfo(url, callback);
+  reptile.parseVideoPlayInfo(url, {
+    success: res => {
+      utils.successCallback(callback, res);
+      const data = JSON.parse(res);
+      dao.updatePlaySource(url, data.result)
+    }
+  });
 };
