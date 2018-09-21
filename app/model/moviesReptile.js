@@ -5,6 +5,7 @@ const utils = require('../lib/utils');
 
 const DADATU_BASE = 'https://www.dadatu.com';
 const SEARCH = DADATU_BASE + '/search.php';
+const THIS = this;
 
 
 exports.search = function (keyword, page, callback) {
@@ -47,6 +48,15 @@ exports.search = function (keyword, page, callback) {
     });
 };
 
+exports.searchAwait = function (keyword, page) {
+  return new Promise((resolve, reject) => {
+    THIS.search(keyword, page, {
+      success: resolve,
+      error: reject
+    })
+  })
+};
+
 exports.parseVideoInfo = function (url, callback) {
   request.get(url).end(function (err, result) {
     const $ = cheerio.load(result.text);
@@ -67,6 +77,12 @@ exports.parseVideoInfo = function (url, callback) {
     });
     utils.successCallback(callback, ret);
   });
+};
+
+exports.parseVideoInfoAwait = url => {
+  return new Promise((resolve, reject) => {
+    THIS.parseVideoInfo(url, {success: resolve, error: reject})
+  })
 };
 
 const phantomjs = require('phantomjs');
@@ -97,6 +113,12 @@ exports.parseVideoPlayInfo = function (url, callback) {
     } else {
       utils.errorCallback(callback, new Error(result));
     }
+  })
+};
+
+exports.parseVideoPlayInfoAwait = url => {
+  return new Promise((resolve, reject) => {
+    THIS.parseVideoPlayInfo(url, {success: resolve, error: reject})
   })
 };
 

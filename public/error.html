@@ -19,31 +19,7 @@
             color: #aaa
         }
     </style>
-    <script>
-        function sharedSuccess() {
-            console.log('sharedSuccess')
-        }
 
-        function sharedError() {
-          console.log('sharedError')
-        }
-
-
-        document.onreadystatechange = () => {
-          if (document.readyState === 'complete') {
-
-            HtmlViewer.getHtmlObj(JSON.stringify({
-              title: 'sdasd',
-              description: 'asdasd',
-              imgUrl: 'asdasd',
-              url: 'http://www.baidu.com/',
-              successCallback: 'sharedSuccess',
-              errorCallback: 'sharedError'
-            }))
-
-          }
-        }
-    </script>
 </head>
 
 <body style="overflow-y:hidden;">
@@ -51,5 +27,22 @@
 <div id="loading" style="font-weight:bold;padding-top:120px;" align="center">请添加[localhost]域名为白名单。</div>
 <input type="button" value="shared" onclick="bxJsBridge.shared()">
 </body>
+<script>
+  function sharedSuccess() {
+    console.log('sharedSuccess')
+  }
 
+  function sharedError() {
+    console.log('sharedError')
+  }
+
+  HtmlViewer.getHtmlObj(JSON.stringify({
+    title: 'sdasd',
+    description: 'asdasd',
+    imgUrl: 'asdasd',
+    url: 'http://www.baidu.com/',
+    successCallback: 'sharedSuccess',
+    errorCallback: 'sharedError'
+  }))
+</script>
 </html>

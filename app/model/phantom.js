@@ -19,16 +19,15 @@ page.onLoadFinished = function (status) {
         from: system.args[1]
       };
       if (videoSrc.indexOf('purl') >= 0) {
-        page.onConsoleMessage = function (data) {
-          res.result = data;
-          console.log(JSON.stringify(res));
-        };
-        page.evaluateJavaScript("function(){if (purl) {console.log(purl) } else {console.log('') }}")
+        var purl = page.evaluate(function () {
+          return purl;
+        });
+        res.result = purl;
+        console.log(JSON.stringify(res));
       } else {
         res.result = videoSrc;
         console.log(JSON.stringify(res));
       }
-
       page.close();
       phantom.exit();
     }, 1000);
