@@ -7,7 +7,7 @@ function MovieController() {
   let totalCount = 0;
   let keyWorld = '';
 
-  this.search = function(req, resp) {
+  this.search = async function(req, resp) {
     const url = urlParser.parse(req.url, true);
     const query = url.query;
     console.log(query);
@@ -24,64 +24,51 @@ function MovieController() {
         return
       }
     }
-
-    moviesModel.findByKeyword(query.sw, query.page, {
-      success: function(data) {
-        keyWorld = query.sw;
-        if (totalCount <= 0) {
-          totalCount = data.totalCount;
-        }
-        console.log('/search', `搜索到与 '${query.sw}' 相关的 '${totalCount}' 条结果`);
-        resp.writeHead(200, {
-          'Content-type': 'text/json; charset=utf-8'
-        });
-        resp.write(JSON.stringify(data));
-        resp.end();
-      }
-    })
+    const data = await moviesModel.findByKeyword(query.sw, query.page);
+    keyWorld = query.sw;
+    if (totalCount <= 0) {
+      totalCount = data.totalCount;
+    }
+    resp.writeHead(200, {
+      'Content-type': 'text/json; charset=utf-8'
+    });
+    resp.write(JSON.stringify(data));
+    resp.end();
   };
 
-  this.video = function(req, resp) {
-    moviesModel.findById(urlParser.parse(req.url, true).query.url, {
-      success: function(data) {
-        resp.writeHead(200, {
-          'Content-type': 'text/json; charset=utf-8'
-        });
-        resp.write(JSON.stringify(data));
-        resp.end();
-      }
-    })
+  this.video = async function(req, resp) {
+    const data = await moviesModel.findById(urlParser.parse(req.url, true).query.url);
+    resp.writeHead(200, {
+      'Content-type': 'text/json; charset=utf-8'
+    });
+    resp.write(JSON.stringify(data));
+    resp.end();
   };
 
-  this.play = function(req, resp) {
-    moviesModel.queryVideoSource(urlParser.parse(req.url, true).query.url, {
-      success: function(data) {
-        resp.writeHead(200, {
-          'Content-type': 'text/json; charset=utf-8'
-        });
-        resp.write(data);
-        resp.end();
-      },
-      error: function(err) {
-        resp.writeHead(404, {
-          'Content-type': 'text/json; charset=utf-8'
-        });
-        resp.write(JSON.stringify(err));
-        resp.end();
-      }
-    })
-  }
+  this.play = async function(req, resp) {
+    try {
+      const data = await moviesModel.queryVideoSource(urlParser.parse(req.url, true).query.url);
+      resp.writeHead(200, {
+        'Content-type': 'text/json; charset=utf-8'
+      });
+      resp.write(JSON.stringify(data));
+      resp.end();
+    } catch (e) {
+      resp.writeHead(404, {
+        'Content-type': 'text/json; charset=utf-8'
+      });
+      resp.write(JSON.stringify(e));
+      resp.end();
+    }
+  };
 
-  this.movies = function(req, resp) {
-    moviesModel.findAll({
-      success: function(res) {
-        resp.writeHead(200, {
-          'Content-type': 'text/json; charset=utf-8'
-        });
-        resp.write(JSON.stringify(res));
-        resp.end();
-      }
-    })
+  this.movies = async function(req, resp) {
+    const res = await moviesModel.findAll();
+    resp.writeHead(200, {
+      'Content-type': 'text/json; charset=utf-8'
+    });
+    resp.write(JSON.stringify(res));
+    resp.end();
   }
 }
 

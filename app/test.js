@@ -10,8 +10,8 @@ async function test() {
 }
 
 async function doIt() {
-  const result = await dao.findAllAwait();
-  console.log(result);
+  //const result = await dao.findAllAwait();
+  console.log(await test());
 }
 
 doIt();

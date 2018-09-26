@@ -1,66 +1,49 @@
 const reptile = require('./moviesReptile');
 const dao = require('./moviesDao');
-const utils = require('../lib/utils');
-const urlParser = require('url');
 
-exports.findAll = function(callback) {
-  dao.findAll(callback)
+exports.findAll = async function () {
+  return await dao.findAllAwait()
 };
 
-exports.findByKeyword = function(keyword, page, callback) {
-  reptile.search(keyword, page, {
-    success: function(res) {
-      utils.successCallback(callback, res);
-      dao.saveMovies(res)
-    }
+exports.findByKeyword = async function (keyword, page) {
+  const result = await reptile.searchAwait(keyword, page);
+  dao.saveMovies(result);
+  return result;
+};
+
+exports.findById = async function (url) {
+  const result = await dao.findMovieByIdAwait(url);
+  if (result.play_source) {
+    return result
+  }
+
+  const res = await reptile.parseVideoInfoAwait(url);
+  dao.savePlaySource(url, {
+    play_source: res.playSource,
+    desc: res.desc
   });
+  return res;
 };
 
-exports.findById = function(url, callback) {
-  dao.findMovieById(url, {
-    success: function(res) {
-      if (res.play_source) {
-        utils.successCallback(callback, res)
-      } else {
-        reptile.parseVideoInfo(url, {
-          success: function(res) {
-            utils.successCallback(callback, res);
-            dao.savePlaySource(url, {
-              play_source: res.playSource,
-              desc: res.desc
-            })
-          }
-        })
-      }
+exports.queryVideoSource = async function (url) {
+  try {
+    const res = await dao.findRealPlayUrlAwait(url);
+    if (res) {
+      return res;
     }
-  })
-
+  } catch (e) {
+    throw e;
+  }
+  return await parseVideoPlayInfo(url);
 };
 
-exports.queryVideoSource = function(url, callback) {
-  dao.findRealPlayUrl(url, {
-    success: function(res) {
-      if (res) {
-        utils.successCallback(callback, JSON.stringify(res));
-      } else {
-        parseVideoPlayInfo(url, callback);
-      }
-    },
-    error: function(err) {
-      parseVideoPlayInfo(url, callback);
-    }
-  })
-};
-
-function parseVideoPlayInfo(url, callback) {
-  reptile.parseVideoPlayInfo(url, {
-    success: function(data) {
-      utils.successCallback(callback, data);
-      data = JSON.parse(data);
-      dao.addRealPlayUrl(url, data.result);
-    },
-    error: function(err) {
-      utils.errorCallback(callback, err)
-    }
-  });
+async function parseVideoPlayInfo(url) {
+  try {
+    const res = await reptile.parseVideoPlayInfoAwait(url);
+    const data = JSON.parse(res);
+    dao.addRealPlayUrl(url, data.result);
+    return data;
+  } catch (e) {
+    throw e;
+  }
 }

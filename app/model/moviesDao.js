@@ -18,6 +18,15 @@ function saveMovies(movies, callback) {
   });
 }
 
+function saveMoviesAwait(movies) {
+  return new Promise((resolve, reject) => {
+    saveMovies(movies, {
+      success: resolve,
+      error: reject
+    })
+  })
+}
+
 function savePlaySource(movieId, playSource, callback) {
   connectDb((client, collection) => {
     collection.updateOne({
@@ -172,11 +181,11 @@ function findRealPlayUrl(playUrl, callback) {
         return
       }
       if (!doc.play_source[0].playUrls && doc.play_source[0].playUrls.length <= 0) {
-        utils.successCallback(callback, null)
+        utils.successCallback(callback, null);
         return
       }
       if (!doc.play_source[0].playUrls[0].real_url) {
-        utils.successCallback(callback, null)
+        utils.successCallback(callback, null);
         return
       }
 
@@ -236,23 +245,7 @@ module.exports = {
   findRealPlayUrlAwait: findRealPlayUrlAwait,
   findPlaySourceUrlAwait: findPlaySourceUrlAwait,
   findMovieByIdAwait: findMovieByIdAwait,
-  addRealPlayUrlAwait: addRealPlayUrlAwait
+  addRealPlayUrlAwait: addRealPlayUrlAwait,
+  saveMoviesAwait: saveMoviesAwait,
+  savePlaySourceAwait: savePlaySourceAwait
 };
-
-// findRealPlayUrl('https://www.dadatu.com/xj/tangrenjietanan2/play-1-1.html', {
-//   success: (res) => {
-//     console.log(res);
-//     console.log(res.play_source[0].playUrls.length);
-//     console.log(res.play_source[0].playUrls);
-//   }
-// });
-
-// addRealPlayUrl('playUrl', 'https://www.dadatu.com/xj/wobushiyaoshen/play-0-0.html', {
-//   success: (res) => {
-//     console
-//       .log(res)
-//   },
-//   error: (err) => {
-//     console.log(err)
-//   }
-// });
