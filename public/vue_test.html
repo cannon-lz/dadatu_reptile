@@ -1,0 +1,42 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+      window.onload = function () {
+        var app = new Vue({
+          el: '#app',
+          data: {
+            price: 5.0,
+            quantity: 2
+          },
+          computed: {
+            totalPriceWithTax() {
+              return this.price * this.quantity * 1.03
+            },
+            total() {
+              return this.price * this.quantity
+            }
+          }
+        })
+      }
+    </script>
+</head>
+<body>
+<div id="app">
+    <div>
+        <label>Price: </label>
+        <input type="text" v-model:value="price" title="Price">
+    </div>
+    <div>
+        <label>Total: </label>
+        <p style="display: inline">{{total}}</p>
+    </div>
+    <div>
+        <label>Taxes: </label>
+        <p style="display: inline">{{totalPriceWithTax}}</p>
+    </div>
+</div>
+</body>
+</html>

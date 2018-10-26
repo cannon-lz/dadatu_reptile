@@ -6,7 +6,6 @@ const IndexController = require('./controller/indexController');
 const movieController = new MovieController();
 const indexController = new IndexController();
 
-
 app.get('/', indexController.index);
 app.get('/index', indexController.index);
 app.get('/search', movieController.search);

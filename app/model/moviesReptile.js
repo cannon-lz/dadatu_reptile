@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const urlencode = require('urlencode');
 const utils = require('../lib/utils');
 
-const DADATU_BASE = 'https://www.dadatu.com';
+const DADATU_BASE = 'https://www.dadatu.co';
 const SEARCH = DADATU_BASE + '/search.php';
 const THIS = this;
 

@@ -163,9 +163,7 @@ function findPlaySourceUrlAwait(playSourceUrl) {
 
 function findRealPlayUrl(playUrl, callback) {
   connectDb((client, collection) => {
-    collection.find({
-      'play_source.playUrls.url': playUrl
-    }).forEach((doc) => {
+    collection.find({ 'play_source.playUrls.url': playUrl }).forEach((doc) => {
       doc.play_source = doc.play_source.filter((playSource) => {
         playSource.playUrls = playSource.playUrls.filter((url) => {
           return url.url === playUrl;

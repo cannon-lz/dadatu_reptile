@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+
     <style>
         body {
             margin: 0;
@@ -26,7 +27,7 @@
         console.log('刷新操作');
         // 执行刷新逻辑，例如重新拉取数据等
         // 模拟拉取数据
-        setTimeout(function() {
+        setTimeout(function () {
           // 刷新完成后必须调用下面的方法通知原生刷新组件刷新完毕
           bxJsBridge.setRefreshComplete();
         }, 1000)
@@ -37,6 +38,7 @@
         // TODO 刷新完毕，可以在这里执行提示刷新完成的逻辑
         showToast('已更新为最新内容')
       }
+
       //enable();
 
       function reload() {
@@ -73,15 +75,16 @@
         }, 3000)
       }
 
-      var purl = "Hello PhantomJs!!!";
+      console.log(document.cookie);
 
     </script>
 </head>
 <body>
 <input type="button" value="enable" style="padding: 12px; font-size: 14px" onclick="enable()">
 <input type="button" value="reload" style="padding: 12px; font-size: 14px" onclick="reload()">
-<a href="bxapp://mini_app?page=/pages/index">跳转至小程序</a>
-<video style="width: 100%; height: 50%; background-color: black" src="http://zuikzy.win7i.com/2018/07/10/FD2KhGi7xEzClPR9/playlist.m3u8"></video>
+<a href="bxapp://login">跳转百姓网App</a>
+<video style="width: 100%; height: 50%; background-color: black"
+       src="http://zuikzy.win7i.com/2018/07/10/FD2KhGi7xEzClPR9/playlist.m3u8"></video>
 <input type="button" value="shared" onclick="window.open('./error.html')">
 </body>
 </html>

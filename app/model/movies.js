@@ -13,7 +13,7 @@ exports.findByKeyword = async function (keyword, page) {
 
 exports.findById = async function (url) {
   const result = await dao.findMovieByIdAwait(url);
-  if (result.play_source) {
+  if (result && result.play_source) {
     return result
   }
 
